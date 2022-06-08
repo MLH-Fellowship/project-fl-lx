@@ -1,5 +1,5 @@
 import os
-from turtle import color, fillcolor
+# from turtle import color, fillcolor
 from flask import Flask, render_template, request, url_for
 from dotenv import load_dotenv
 from app.data import header_info, about_info, images, workExperience, hobby_info
