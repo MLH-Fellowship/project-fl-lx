@@ -1,5 +1,5 @@
 header_info = {
-    "name": "Fanny Li",
+    "name": "Fanny",
     "img": "/static/img/Headshot.png"
 }
 
