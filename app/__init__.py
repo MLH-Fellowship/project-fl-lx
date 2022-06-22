@@ -5,9 +5,34 @@ from dotenv import load_dotenv
 from app.data import header_info, about_info, images, workExperience, hobby_info
 import folium
 import pandas as pd
+import datetime
+from peewee import *
+from playhouse.shortcuts import model_to_dict
 
 load_dotenv()
 app = Flask(__name__)
+
+mydb = MySQLDatabase(os.getenv("MYSQL_DATABASE"),
+    user=os.getenv("MYSQL_USER"),
+    password=os.getenv("MYSQL_PASSWORD"),
+    host=os.getenv("MYSQL_HOST"),
+    port=3306
+)
+
+print(mydb)
+
+class TimelinePost(Model):
+    name = CharField()
+    email = CharField()
+    content = TextField()
+    created_at = DateTimeField(default=datetime.datetime.now)
+
+    class Meta:
+        database = mydb
+
+mydb.connect()
+mydb.create_tables([TimelinePost])
+
 
 
 @app.route('/home')
@@ -61,6 +86,23 @@ def dated_url_for(endpoint, **values):
             values['q'] = int(os.stat(file_path).st_mtime)
     return url_for(endpoint, **values)
 
+@app.route('/api/timeline_post', methods=['POST'])
+def post_time_line_post():
+    name = request.form.get('name', False)
+    email = request.form.get('email', False)
+    content = request.form.get('content', False)
+    timeline_post = TimelinePost.create(name=name, email=email, content=content)
+
+    return model_to_dict(timeline_post)
+
+@app.route('/api/timeline_post', methods=['GET'])
+def get_time_line_post():
+    return {
+        'timeline_posts': [
+            model_to_dict(p)
+            for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())
+        ]
+    }
 
 if __name__ == "__main__":
     app.run(debug=True)
