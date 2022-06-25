@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<h3 id="message-title">Message Request Form</h3>
+<div class="message-form">
+    <form id="form" action="/api/timeline_post" target="/timeline" method="POST">
+        <input class="input-box" type="text" id="name" name="name" placeholder="Name">
+        <input class="input-box" type="email" id="email" name="email" placeholder="Email">
+        <textarea class="input-box" name="content" id="content" cols="50" rows="10" placeholder="Message"></textarea>
+        <button id="submit-button" type="submit" value="Submit">Send Message</button>
+    </form>
+
+</div>
+<!-- <div class="message-posts">
+    <iframe src="/api/timeline_post" frameborder="0" height="100%"></iframe>
+</div> -->
+<div id="post-data"></div>
+
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    // $("#form").addEventListener("submit", function (event) {
+    //     event.preventDefault();
+
+    //     const payload = new FormData(form);
+
+    //     fetch('http://localhost:5000/api/timeline_post', {
+    //         method: "POST",
+    //         body: payload
+    //     }).then(res => res.json())
+    //         .then(data => {
+    //             data => console.log(data);
+    //         }).catch(err => console.log(err));
+    // });
+    // convert form to a new formData object
+
+    const form = document.getElementById('form');
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const payload = new FormData(form);
+        console.log([...payload]);
+
+        // post the payload using fetch
+        fetch('http://localhost:5000/api/timeline_post', {
+            method: 'POST',
+            body: payload,
+        })
+            .then(res => res.json())
+            .then(data => console.log(data))
+    })
+
+
+    fetch('http://localhost:5000/api/timeline_post').then(response => response.json())
+        .then(data =>
+            appendData(data.timeline_posts)
+        ).catch(err => {
+            console.log(err);
+        });
+
+    // function appendData(data) {
+    //     var mainContainer = document.getElementById("post-data");
+
+    //     for (var i = 0; i < data.length; i++) {
+    //         var div = document.createElement("div");
+    //         div.innerHTML = data;
+    //         mainContainer.appendChild(div);
+    //     }
+    // }
+
+    appendData = data => {
+        const container = document.querySelector("#post-data");
+
+        data.forEach(timeline_post => {
+            const post = document.createElement('p');
+            post.innerHTML = `Name: ${timeline_post.name} <br> Email: ${timeline_post.email} <br> Content: ${timeline_post.content} <br> Created at: ${timeline_post.created_at}`;
+            container.append(post);
+        })
+    }
+
+</script>
+
+{% endblock %}
+
+{% endblock %}
