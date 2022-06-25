@@ -109,6 +109,9 @@ def delete_time_line_post(id):
     post_to_delete = TimelinePost.get(TimelinePost.id == id)
     post_to_delete.delete_instance()
 
+    return "Deleted post."
+
+
 @app.route("/timeline")
 def timeline():
     return render_template('timeline.html', title="Timeline")
