@@ -1,6 +1,6 @@
 import os
 # from turtle import color, fillcolor
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, url_for, redirect
 from dotenv import load_dotenv
 from app.data import header_info, about_info, images, workExperience, hobby_info
 import folium
@@ -33,9 +33,7 @@ class TimelinePost(Model):
 mydb.connect()
 mydb.create_tables([TimelinePost])
 
-
-
-@app.route('/home')
+@app.route('/')
 def index():
     return render_template('index.html', title="MLH Fellow", url=os.getenv("URL"), header_info=header_info, about_info=about_info, images=images, workExperience=workExperience)
 
