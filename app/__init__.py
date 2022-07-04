@@ -98,26 +98,25 @@ def post_time_line_post():
     name = request.form.get('name', False)
     email = request.form.get('email', False)
     content = request.form.get('content', False)
-    timeline_post = TimelinePost.create(name=name, email=email, content=content)
-    try: 
-           name = request.form['name'] 
-    except: 
-           return "Invalid name", 400
 
     # using regex to check if it is a proper email formatting
     email_re=re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-za-z0-9-]+(\.[A-Z|a-z]{2,})+')
-    if re.fullmatch(email_re, request.form['email']):
-            email = request.form['email'] 
-    else:
-            return "Invalid email", 400
+    
+    print("NAME",name)
+    print("EMAIL",email)
+    print("CONTENT",content)
+    if name == False or len(name) == 0 or name == 'False':
+        return "Invalid name", 400
 
-    if (len(request.form['content']) != 0):  
-        content = request.form['content'] 
-    else: 
+    elif (len(email) == 0 or "@" not in email):
+        return "Invalid email", 400
+
+    elif content == False or content == "" or len(content) == 0:  
         return "Invalid content", 400
-
-    print(timeline_post)
-    return model_to_dict(timeline_post)
+    else:
+        print(timeline_post)
+        timeline_post = TimelinePost.create(name=name, email=email, content=content)
+        return model_to_dict(timeline_post)
 
 @app.route('/api/timeline_post', methods=['GET'])
 def get_time_line_post():
@@ -128,13 +127,30 @@ def get_time_line_post():
         ]
     }
 
+@app.route('/api/timeline_post/', methods=['DELETE'])
+def delete_all_posts():
+    sql = TimelinePost.delete()
+    sql.execute()
+    return {
+       'timeline_posts': [
+            model_to_dict(p)
+            for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())
+        ] 
+    }
+
+
 @app.route('/api/timeline_post/<int:id>', methods=['DELETE'])
 def delete_time_line_post(id):
-    post_to_delete = TimelinePost.get(TimelinePost.id == id)
-    post_to_delete.delete_instance()
+    id = request.form['id']
+    sql = TimelinePost.delete().where(TimelinePost.id == id)
+    sql.execute()
 
-    return "Deleted post."
-
+    return {
+       'timeline_posts': [
+            model_to_dict(p)
+            for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())
+        ] 
+    }
 
 @app.route("/timeline")
 def timeline():

@@ -13,6 +13,7 @@ class AppTestCase(unittest.TestCase):
         html = response.get_data(as_text=True)
         assert "<h1>I'm Fanny Li</h1>" in html
 
+
     def test_timeline(self):
         response = self.client.get("/api/timeline_post")
         assert response.status_code == 200
@@ -25,14 +26,10 @@ class AppTestCase(unittest.TestCase):
 
     def test_malformed_timeline_post(self):
         # POST request missing name
-        print("WRITING TO TIMELINE POST")
-        response = self.client.post("/api/timeline_post", 
-        data={"email": "john@example.com", "content": "Hello world, I'm John!"})
-        print(response.status_code)
+        response = self.client.post("/api/timeline_post", data={"email": "john@example.com", "content": "Hello world, I'm John!"})
         assert response.status_code == 400
         html = response.get_data(as_text=True)
         assert "Invalid name" in html
-        self.client.delete("/api/timeline_post/")
         
         # POST request with empty content
         response = self.client.post("/api/timeline_post", data={"name": "John Doe",
@@ -41,14 +38,15 @@ class AppTestCase(unittest.TestCase):
         assert response.status_code == 400
         html = response.get_data(as_text=True)
         assert "Invalid content" in html
-        self.client.delete("/api/timeline_post/")
+
 
         # POST request with malformed email
         response = self.client.post("/api/timeline_post", data= {"name": "John Doe", "email": "not-an-email", "content" :"Hello world, I'm John!"})
         assert response.status_code == 400
         html = response.get_data(as_text=True)
         assert "Invalid email" in html
-        self.client.delete("/api/timeline_post/")
+
+        self.client.delete("/api/timeline_post")
 
         
             

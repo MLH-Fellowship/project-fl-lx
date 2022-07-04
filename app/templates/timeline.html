@@ -23,20 +23,6 @@
 {% block javascript %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
-    // $("#form").addEventListener("submit", function (event) {
-    //     event.preventDefault();
-
-    //     const payload = new FormData(form);
-
-    //     fetch('http://localhost:5000/api/timeline_post', {
-    //         method: "POST",
-    //         body: payload
-    //     }).then(res => res.json())
-    //         .then(data => {
-    //             data => console.log(data);
-    //         }).catch(err => console.log(err));
-    // });
-    // convert form to a new formData object
 
     const form = document.getElementById('form');
     form.addEventListener('submit', function (e) {
@@ -61,16 +47,6 @@
         ).catch(err => {
             console.log(err);
         });
-
-    // function appendData(data) {
-    //     var mainContainer = document.getElementById("post-data");
-
-    //     for (var i = 0; i < data.length; i++) {
-    //         var div = document.createElement("div");
-    //         div.innerHTML = data;
-    //         mainContainer.appendChild(div);
-    //     }
-    // }
 
     appendData = data => {
         const container = document.querySelector("#post-data");
