@@ -8,14 +8,16 @@ import pandas as pd
 import datetime
 from peewee import *
 from playhouse.shortcuts import model_to_dict
+import re
 
 load_dotenv()
 app = Flask(__name__)
 
 # set the mydb variable to an in-memory sqlite database during testing
+print(os.getenv("TESTING"))
 if os.getenv("TESTING") == "true":
     print("Running in test mode")
-    mydb = SqliteDatabase('file:memory?mode=memory&cache=shared', uri=True)
+    mydb = SqliteDatabase("file:memory?mode=memory&cache=shared", uri=True)
 else:
     mydb = MySQLDatabase(os.getenv("MYSQL_DATABASE"),
         user=os.getenv("MYSQL_USER"),
@@ -97,7 +99,24 @@ def post_time_line_post():
     email = request.form.get('email', False)
     content = request.form.get('content', False)
     timeline_post = TimelinePost.create(name=name, email=email, content=content)
+    try: 
+           name = request.form['name'] 
+    except: 
+           return "Invalid name", 400
 
+    # using regex to check if it is a proper email formatting
+    email_re=re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-za-z0-9-]+(\.[A-Z|a-z]{2,})+')
+    if re.fullmatch(email_re, request.form['email']):
+            email = request.form['email'] 
+    else:
+            return "Invalid email", 400
+
+    if (len(request.form['content']) != 0):  
+        content = request.form['content'] 
+    else: 
+        return "Invalid content", 400
+
+    print(timeline_post)
     return model_to_dict(timeline_post)
 
 @app.route('/api/timeline_post', methods=['GET'])
