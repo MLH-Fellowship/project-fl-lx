@@ -102,12 +102,18 @@ def get_time_line_post():
         ]
     }
 
-@app.route('/api/timeline_post/<int:id>', methods=['DELETE'])
-def delete_time_line_post(id):
-    post_to_delete = TimelinePost.get(TimelinePost.id == id)
-    post_to_delete.delete_instance()
+@app.route('/api/timeline_post', methods=['DELETE'])
+def delete_time_line_post():
+    id = request.form['id']
+    sql = TimelinePost.delete().where(TimelinePost.id == id)
+    sql.execute()
 
-    return "Deleted post."
+    return {
+       'timeline_posts': [
+            model_to_dict(p)
+            for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())
+        ] 
+    }
 
 
 @app.route("/timeline")
