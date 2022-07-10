@@ -14,4 +14,14 @@ services:
                         = .:/myportfolio
                 depends_on:
                         - mysql
-                       
+        
+        mysql:
+                container_name: mysql
+                image: mariadb
+                restart: always
+                env_file:
+                        - .env
+                volumes: 
+                        - mydatabase:/var/lib/mysql
+volumes: 
+        mydatabase: 
