@@ -107,7 +107,6 @@ def post_time_line_post():
     elif content == False or content == "" or len(content) == 0:  
         return "Invalid content", 400
     else:
-        print(timeline_post)
         timeline_post = TimelinePost.create(name=name, email=email, content=content)
         return model_to_dict(timeline_post)
 
